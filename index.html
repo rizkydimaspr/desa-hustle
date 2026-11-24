@@ -1,3 +1,5 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#14172B"><meta name="description" content="Desa Hustle: desa 3D dari komentar penonton @hustlestory.id. Masuk, bikin karakter, dan jalan-jalan jadi warga. Ilustrasi: cerita fiktif."><style>html,body{margin:0;padding:0}</style></head><body>
 <title>Desa Hustle</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -477,8 +479,12 @@ const byT={};LIST.forEach(u=>byT[uid(u)]=u);
 // ---------- kanvas penuh layar ----------
 const R=K3.R,S=K3.S,CAM=K3.CAM,cv=K3.cv;
 S.traverse(o=>{if(o.isDirectionalLight&&o.castShadow){o.shadow.mapSize.set(2048,2048);if(o.shadow.map){o.shadow.map.dispose();o.shadow.map=null}}});
-function fit(){const w=innerWidth,h=innerHeight;R.setPixelRatio(Math.min(devicePixelRatio||1,1.75));R.setSize(w,h,false);CAM.aspect=w/h;CAM.updateProjectionMatrix()}
-addEventListener('resize',fit);fit();
+function vp(){const r=cv.getBoundingClientRect();return {x:r.left,y:r.top,w:r.width||innerWidth,h:r.height||innerHeight}}
+function fit(){const v=vp(),w=v.w,h=v.h;R.setPixelRatio(Math.min(devicePixelRatio||1,1.75));R.setSize(w,h,false);CAM.aspect=w/h;CAM.updateProjectionMatrix()}
+addEventListener('resize',fit);if(window.visualViewport)visualViewport.addEventListener('resize',fit);addEventListener('orientationchange',()=>setTimeout(fit,300));fit();
+// anti kedip (z-fighting): jarak dekat kamera dinaikkan, lapisan datar (jalan, sawah, alas titik) diberi jarak lebih renggang
+CAM.near=1.5;CAM.far=700;CAM.updateProjectionMatrix();
+S.traverse(o=>{if(o.isMesh&&o.geometry&&o.geometry.type==='PlaneGeometry'&&o.position.y>0&&o.position.y<.06)o.position.y*=3});
 K3.reset();K3.goods.visible=true;
 K3.titik.forEach((o,i)=>K3.setTitik(i,byT[i+1]?'terisi':'kosong'));(K3.titik2||[]).forEach((o,i)=>K3.setTitik2(i,byT[101+i]?'terisi':'kosong'));
 const NT=20+(K3.titik2||[]).length;
@@ -488,7 +494,7 @@ $('nIsi').textContent=LIST.length;$('nKos').textContent=NT-LIST.length;
 const GX=68; // gerbang utama di tengah sawah, jalan masuk x=GX dari jalan raya ke simpang z=10
 (function(){const M=K3.M,BX=K3.BX,CY=K3.CY,TM=t=>new T.MeshBasicMaterial({map:t});
  [K3.gapura,K3.gapura2].forEach(g=>{if(g&&g.parent)g.parent.remove(g)}); // dua gapura lama diganti satu gerbang utama
- M(new T.PlaneGeometry(6,37).rotateX(-Math.PI/2),'#C9A06A',K3.S,GX,.03,30,0,0);
+ M(new T.PlaneGeometry(6,33.5).rotateX(-Math.PI/2),'#C9A06A',K3.S,GX,.087,29.25,0,0);
  const IGC=['#833AB4','#C13584','#E1306C','#F77737','#FCAF45'],TTC={bg:'#010101',c:'#25F4EE',r:'#FE2C55'};
  function bg(g,kind,W,H){if(kind==='ig'){const gr=g.createLinearGradient(0,H,W,0);IGC.forEach((c,i)=>gr.addColorStop(i/(IGC.length-1),c));g.fillStyle=gr}else g.fillStyle=TTC.bg;g.fillRect(0,0,W,H)}
  function txt(g,kind,t,x,y){if(kind==='tt'){g.fillStyle=TTC.c;g.fillText(t,x-3,y-3);g.fillStyle=TTC.r;g.fillText(t,x+3,y+3)}g.fillStyle='#FFFFFF';g.fillText(t,x,y)}
@@ -562,8 +568,11 @@ $('bHome').onclick=()=>{if(MAKER)return;PL.follow=false;select(0);flyTo(HOME,1.2
 
 // ---------- pilih titik ----------
 const ray=new T.Raycaster(),nd=new T.Vector2();
-function pick(x,y){if(MAKER)return;nd.set(x/innerWidth*2-1,-(y/innerHeight)*2+1);ray.setFromCamera(nd,CAM);const hit=ray.intersectObjects(S.children,true).find(h=>h.object.visible!==false);
- if(!hit)return;const p=hit.point;let best=0,bd=1e9;[...K3.titik,...(K3.titik2||[])].forEach(o=>{const d=Math.hypot(o.x-p.x,o.z-p.z);if(d<bd){bd=d;best=(o.rt===2?100:0)+o.n}});
+const GP=new T.Plane(new T.Vector3(0,1,0),0),MKS=()=>[...K3.titik,...(K3.titik2||[])].map(o=>o.sp);
+function pick(x,y){if(MAKER)return;const v=vp();nd.set((x-v.x)/v.w*2-1,-((y-v.y)/v.h)*2+1);ray.setFromCamera(nd,CAM);
+ // 1) ketuk penanda titik  2) selain itu pakai titik di tanah (bukan atap/pohon/label), supaya arah jalan sesuai yang diketuk
+ const mk=MKS(),mh=ray.intersectObjects(S.children,true).find(h=>h.object.visible!==false&&(!h.object.isSprite||mk.includes(h.object)));if(mh&&mk.includes(mh.object)){const o=[...K3.titik,...(K3.titik2||[])].find(o=>o.sp===mh.object);if(o){const id=(o.rt===2?100:0)+o.n;select(id,true);if(pc){const f=frontOf(id);goTo([f.x+f.dx*7,f.z+f.dz*7],false)}return}}
+ const p=new T.Vector3();if(!ray.ray.intersectPlane(GP,p))return;let best=0,bd=1e9;[...K3.titik,...(K3.titik2||[])].forEach(o=>{const d=Math.hypot(o.x-p.x,o.z-p.z);if(d<bd){bd=d;best=(o.rt===2?100:0)+o.n}});
  if(bd<6.5){select(best,true);if(pc){const f=frontOf(best);goTo([f.x+f.dx*7,f.z+f.dz*7],false)}}
  else if(pc){select(0);goTo([p.x,p.z],true)}}
 let SEL=0;
@@ -652,7 +661,7 @@ function route(A,B){// Dijkstra kecil: simpul = awal, akhir, simpang
  for(;;){let u=-1;N.forEach((_,i)=>{if(!done[i]&&(u<0||D[i]<D[u]))u=i});if(u<0||D[u]>=1e9)break;done[u]=1;if(u===1)break;
   N.forEach((v,i)=>{if(done[i]||!v.s.some(x=>N[u].s.includes(x)))return;const w=Math.abs(v.x-N[u].x)+Math.abs(v.z-N[u].z);if(D[u]+w<D[i]){D[i]=D[u]+w;P[i]=u}})}
  const out=[];for(let i=1;i>0;i=P[i]){out.unshift([N[i].x,N[i].z]);if(P[i]<0)break}return out}
-const ring=new T.Mesh(new T.RingGeometry(.55,.85,28).rotateX(-Math.PI/2),new T.MeshBasicMaterial({color:'#FFD23F',transparent:true,opacity:0,depthWrite:false}));ring.position.y=.06;S.add(ring);let ringT=-9;
+const ring=new T.Mesh(new T.RingGeometry(.55,.85,28).rotateX(-Math.PI/2),new T.MeshBasicMaterial({color:'#FFD23F',transparent:true,opacity:0,depthWrite:false}));ring.position.y=.2;S.add(ring);let ringT=-9;
 function goTo(to,follow){if(!pc)return;const a=snap([PL.x,PL.z]),b=snap(to);const P=route(a,b);if(a.d>.3)P.unshift(a.q);PL.path=P;PL.onArrive=null;PL.wave=0;PL.follow=follow;
  ring.position.x=b.q[0];ring.position.z=b.q[1];ringT=performance.now()/1000}
 function stepMe(t,dt){const rk=t+(t0/1000)-ringT;ring.material.opacity=rk<1.2?(1-rk/1.2)*.9:0;ring.scale.setScalar(1+Math.max(0,rk)*.6);
@@ -705,3 +714,5 @@ document.fonts.load('800 40px PJS').then(()=>K3.refont()).catch(()=>{}).finally(
  setTimeout(()=>$('load').classList.add('done'),250);start()});
 })();
 </script>
+
+</body></html>
