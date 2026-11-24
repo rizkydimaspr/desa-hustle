@@ -258,8 +258,7 @@ M(BX(2.6,.8,.3),new T.MeshToonMaterial({map:signTex('RT 01','#FBF7F2','#C9583F',
 const gp2=new T.Group();gp2.position.set(CX2,0,40);occ(CX2,40,12,2);W.add(gp2);K3.gapura2=gp2;[-4.6,4.6].forEach(x=>{M(BX(1,6.2,1),'#E9DCC2',gp2,x,3.1,0,.05);M(new T.ConeGeometry(.9,1,4).rotateY(Math.PI/4),'#2A7F8F',gp2,x,7.5,0,.04)});
 const gt2=signTex('DESA HUSTLE','#2A7F8F','#FBF7F2',1024,140,96);M(BX(10.6,1.4,.8),[mat('#2A7F8F'),mat('#2A7F8F'),mat('#2A7F8F'),mat('#2A7F8F'),new T.MeshToonMaterial({map:gt2,gradientMap:gm}),new T.MeshToonMaterial({map:gt2,gradientMap:gm})],gp2,0,6.5,0,.05);
 M(BX(2.6,.8,.3),new T.MeshToonMaterial({map:signTex('RT 02','#FBF7F2','#2A7F8F',256,96,64),gradientMap:gm}),gp2,0,5.35,0,.04);
-// papan arah di jalan penghubung
-[[51,12.8,'RT 02 →','#2A7F8F'],[85,12.8,'← RT 01','#C9583F']].forEach(([x,z,t,c])=>{const g=new T.Group();g.position.set(x,0,z);W.add(g);M(CY(.08,.08,2.6,6),'#6B4A36',g,0,1.3,0,.02);M(BX(2.2,.6,.1),new T.MeshToonMaterial({map:signTex(t,c,'#FBF7F2',384,100,60),gradientMap:gm}),g,0,2.5,0,.02)});
+// (papan arah diganti versi website: lihat gerbang utama di bawah)
 // lapangan RT 02
 occ(CX2+24,-12,22,14);{const lp=new T.Group();lp.position.set(CX2+24,0,-12);W.add(lp);K3.lapangan=lp;M(new T.PlaneGeometry(20,12).rotateX(-Math.PI/2),'#5FA845',lp,0,.03,0,0,0);
  [[0,-5.8,20,.15],[0,5.8,20,.15],[-9.9,0,.15,11.6],[9.9,0,.15,11.6],[0,0,.15,11.6]].forEach(([a,b,w,d])=>M(BX(w,.02,d),'#FBF7F2',lp,a,.05,b,0,0));
@@ -291,6 +290,35 @@ M(BX(1.6,.5,.1),new T.MeshToonMaterial({map:signTex('HALTE','#3DB163','#FBF7F2',
 const bus=new T.Group();K3.bus=bus;W.add(bus);M(BX(10,3,2.6),'#3DB163',bus,0,2,0);M(BX(10.02,.5,2.62),'#FBF7F2',bus,0,1.1,0,0);for(let k=0;k<5;k++){M(BX(1.4,1,.05),'#BDEEFF',bus,-3.8+k*1.8,2.6,1.31,.02,0);M(BX(1.4,1,.05),'#BDEEFF',bus,-3.8+k*1.8,2.6,-1.31,.02,0)}
 [[-3.4,1.2],[3.4,1.2],[-3.4,-1.2],[3.4,-1.2]].forEach(([a,b])=>M(CY(.55,.55,.4,14).rotateX(Math.PI/2),'#1B1E2E',bus,a,.55,b,.02));bus.position.set(-200,0,50);
 K3.decor();
+// ---------- gerbang utama + plang RT (sama persis dengan website Desa Hustle) ----------
+const GX=68;K3.GX=GX; // gerbang utama di tengah sawah, jalan masuk x=GX dari jalan raya ke simpang z=10
+(function(){const M=K3.M,BX=K3.BX,CY=K3.CY,TM=t=>new T.MeshBasicMaterial({map:t});
+ [K3.gapura,K3.gapura2].forEach(g=>{if(g&&g.parent)g.parent.remove(g)}); // dua gapura lama diganti satu gerbang utama
+ M(new T.PlaneGeometry(6,33.5).rotateX(-Math.PI/2),'#C9A06A',W,GX,.087,29.25,0,0);
+ const IGC=['#833AB4','#C13584','#E1306C','#F77737','#FCAF45'],TTC={bg:'#010101',c:'#25F4EE',r:'#FE2C55'};
+ function bg(g,kind,W,H){if(kind==='ig'){const gr=g.createLinearGradient(0,H,W,0);IGC.forEach((c,i)=>gr.addColorStop(i/(IGC.length-1),c));g.fillStyle=gr}else g.fillStyle=TTC.bg;g.fillRect(0,0,W,H)}
+ function txt(g,kind,t,x,y){if(kind==='tt'){g.fillStyle=TTC.c;g.fillText(t,x-3,y-3);g.fillStyle=TTC.r;g.fillText(t,x+3,y+3)}g.fillStyle='#FFFFFF';g.fillText(t,x,y)}
+ const RT=[{t:'RT 01',s:'WILAYAH INSTAGRAM',k:'ig'},{t:'RT 02',s:'WILAYAH TIKTOK',k:'tt'}];
+ function tex(r,dir){return K3.txTex(512,200,(g,W,H)=>{bg(g,r.k,W,H);g.strokeStyle='#14172B';g.lineWidth=12;g.strokeRect(6,6,W-12,H-12);
+  const cx=W/2+(dir?dir*-34:0);g.textAlign='center';g.textBaseline='middle';g.font='800 76px PJS';txt(g,r.k,r.t,cx,80);
+  let f=40;g.font='800 '+f+'px PJS';while(g.measureText(r.s).width>W-(dir?170:60)&&f>18){f-=2;g.font='800 '+f+'px PJS'}txt(g,r.k,r.s,cx,150);
+  if(dir){g.fillStyle='#FFFFFF';g.beginPath();const x=dir<0?30:W-30,k=dir<0?1:-1;g.moveTo(x,100);g.lineTo(x+k*44,58);g.lineTo(x+k*44,142);g.closePath();g.fill()}})}
+ function plate(par,x,y,front,back,w=3.8,h=1.48){const sm=K3.mat('#3B3A44');const m=new T.Mesh(BX(w,h,.14),[sm,sm,sm,sm,TM(front),TM(back)]);m.position.set(x,y,0);m.castShadow=true;par.add(m);return m}
+ function post(x,z,two){const g=new T.Group();g.position.set(x,0,z);W.add(g);[-2.02,2.02].forEach(a=>M(CY(.09,.11,two?4.6:3.4,8),'#6B4A36',g,a,two?2.3:1.7,0,.03));return g}
+ // papan selamat datang di ujung tiap RT (dua sisi)
+ plate(post(49,13.9),0,2.7,tex(RT[0],0),tex(RT[0],0));
+ plate(post(86,13.9),0,2.7,tex(RT[1],0),tex(RT[1],0));
+ // penunjuk arah di simpang (menghadap orang yang datang dari gerbang)
+ const c=post(GX,5.4,true);plate(c,0,3.75,tex(RT[0],-1),tex(RT[0],1));plate(c,0,2.15,tex(RT[1],1),tex(RT[1],-1));
+ // gerbang utama
+ const gp=new T.Group();gp.position.set(GX,0,42);W.add(gp);
+ // gerbang satu warna (gaya gapura desa); yang berwarna platform hanya plang di bawahnya
+ [-5.4,5.4].forEach(x=>{M(BX(1.1,6.4,1.1),'#E9DCC2',gp,x,3.2,0,.05);M(new T.ConeGeometry(.95,1.1,4).rotateY(Math.PI/4),'#C9583F',gp,x,7.75,0,.04)});
+ const ban=K3.signTex('DESA HUSTLE','#C9583F','#FBF7F2',1024,150,100);
+ const bm=TM(ban),sm=K3.mat('#C9583F');const b=new T.Mesh(BX(12,1.6,.8),[sm,sm,sm,sm,bm,bm]);b.position.y=6.6;b.castShadow=true;gp.add(b);
+ plate(gp,-2.75,4.9,tex(RT[0],-1),tex(RT[0],1),5,1.5);plate(gp,2.75,4.9,tex(RT[1],1),tex(RT[1],-1),5,1.5);
+ K3.gerbang=gp;
+})();
 // ---------- tokoh 3D ----------
 const SKC={a:'#F1C9A5',b:'#EBBE96',c:'#DDA77E',d:'#C98F66'};K3.SKC=SKC;
 function char(o={}){const g=new T.Group(),sk=o.skin||SKC.b,t=.014;const P={};
@@ -492,7 +520,8 @@ $('nIsi').textContent=LIST.length;$('nKos').textContent=NT-LIST.length;
 
 // ---------- gerbang utama + plang RT (warna platform, tanpa logo) ----------
 const GX=68; // gerbang utama di tengah sawah, jalan masuk x=GX dari jalan raya ke simpang z=10
-(function(){const M=K3.M,BX=K3.BX,CY=K3.CY,TM=t=>new T.MeshBasicMaterial({map:t});
+if(!K3.gerbang)(function(){ // lewati kalau lib3d.js sudah memuat gerbang utama (dipakai juga di video)
+const M=K3.M,BX=K3.BX,CY=K3.CY,TM=t=>new T.MeshBasicMaterial({map:t});
  [K3.gapura,K3.gapura2].forEach(g=>{if(g&&g.parent)g.parent.remove(g)}); // dua gapura lama diganti satu gerbang utama
  M(new T.PlaneGeometry(6,33.5).rotateX(-Math.PI/2),'#C9A06A',K3.S,GX,.087,29.25,0,0);
  const IGC=['#833AB4','#C13584','#E1306C','#F77737','#FCAF45'],TTC={bg:'#010101',c:'#25F4EE',r:'#FE2C55'};
