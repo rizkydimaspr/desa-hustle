@@ -551,13 +551,19 @@ const HOME=PORT?{tx:CX2/2,tz:-2,yaw:1.5708,pitch:1.18,dist:250,ly:1}:{tx:CX2/2,t
 if(S.fog){S.fog.near=220;S.fog.far=620}
 
 const ptrs=new Map();let down=null,pinch=null;
+const TOUCH=matchMedia('(pointer:coarse)').matches;
+const pang=(a,b)=>Math.atan2(b.y-a.y,b.x-a.x);
 cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});G=null;
- if(ptrs.size===1)down={x:e.clientX,y:e.clientY,t:performance.now(),moved:0,btn:e.button,shift:e.shiftKey};
- if(ptrs.size===2){const [a,b]=[...ptrs.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y),mx:(a.x+b.x)/2,my:(a.y+b.y)/2};if(down)down.moved=99}});
+ if(ptrs.size===1)down={x:e.clientX,y:e.clientY,t:performance.now(),moved:0,btn:e.button,shift:e.shiftKey,touch:e.pointerType==='touch'};
+ if(ptrs.size===2){const [a,b]=[...ptrs.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y),mx:(a.x+b.x)/2,my:(a.y+b.y)/2,ang:pang(a,b)};if(down)down.moved=99}});
 function pan(dx,dy){PL.follow=false;const k=V.dist/innerHeight*1.15;const s=Math.sin(V.yaw),c=Math.cos(V.yaw);V.tx+=(-dx*c-dy*s)*k;V.tz+=(dx*s-dy*c)*k}
 cv.addEventListener('pointermove',e=>{const p=ptrs.get(e.pointerId);if(!p)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;
- if(ptrs.size===1&&down){down.moved+=Math.abs(dx)+Math.abs(dy);if(down.btn===2||down.shift)pan(dx,dy);else{V.yaw-=dx*.006;V.pitch+=dy*.005}}
- else if(ptrs.size===2&&pinch){const [a,b]=[...ptrs.values()];const d=Math.hypot(a.x-b.x,a.y-b.y),mx=(a.x+b.x)/2,my=(a.y+b.y)/2;V.dist*=pinch.d/Math.max(d,1);pan(mx-pinch.mx,my-pinch.my);pinch={d,mx,my}}
+ if(ptrs.size===1&&down){down.moved+=Math.abs(dx)+Math.abs(dy);
+  if(down.touch&&!MAKER)pan(dx,dy); // HP: satu jari menggeser pandangan
+  else if(down.btn===2||down.shift)pan(dx,dy);else{V.yaw-=dx*.006;V.pitch+=dy*.005}}
+ else if(ptrs.size===2&&pinch){const [a,b]=[...ptrs.values()];const d=Math.hypot(a.x-b.x,a.y-b.y),mx=(a.x+b.x)/2,my=(a.y+b.y)/2,an=pang(a,b);V.dist*=pinch.d/Math.max(d,1);
+  if(e.pointerType==='touch'){let da=an-pinch.ang;da=Math.atan2(Math.sin(da),Math.cos(da));V.yaw-=da;V.pitch+=(my-pinch.my)*.006;V.yaw-=(mx-pinch.mx)*.004}
+  else pan(mx-pinch.mx,my-pinch.my);pinch={d,mx,my,ang:an}}
  clampV()});
 function up(e){ptrs.delete(e.pointerId);if(ptrs.size<2)pinch=null;
  if(down&&ptrs.size===0){if(down.moved<8&&performance.now()-down.t<500)pick(e.clientX,e.clientY);down=null}}
@@ -643,7 +649,7 @@ $('mGo').onclick=()=>{ME.name=cleanName($('mName').value);if(ME.name.length<2){$
  const first=!lsGet()?.made;ME.made=1;lsSet(ME);sendWarga(first?'karakter':'ubah');buildMe();MAKER=false;$('maker').hidden=true;$('bizRow').hidden=false;$('hint').hidden=false;meChip();
  if(first){PL.path=[[GX,10],[homeX(),10]];PL.onArrive=()=>{PL.wave=2.2}}else PL.wave=1.6;
  PL.follow=true;flyTo({tx:PL.x,tz:PL.z-4,yaw:PL.face+.5,pitch:.6,dist:24,ly:1},1.1)};
-function meChip(){$('bMe').hidden=false;$('hint').textContent='Ketuk jalan untuk berjalan. Ketuk titik untuk melihat usahanya.';
+function meChip(){$('bMe').hidden=false;$('hint').textContent=TOUCH?'Ketuk jalan untuk berjalan. 1 jari: geser pandangan. 2 jari: putar, miringkan, zoom.':'Ketuk jalan untuk berjalan. Ketuk titik untuk melihat usahanya.';
  let b=document.querySelector('.me');if(!b){b=document.createElement('button');b.className='me';$('bizRow').prepend(b);b.onclick=openMaker}
  b.textContent='';const n=document.createElement('span');n.textContent=ME.name;const e=document.createElement('span');e.textContent='· Ubah';e.style.opacity='.65';b.append(n,e)}
 $('bMe').onclick=()=>{if(MAKER||!pc)return;PL.follow=true;flyTo({tx:PL.x,tz:PL.z,pitch:.6,dist:22,ly:1},.8)};
