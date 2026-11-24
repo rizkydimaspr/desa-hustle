@@ -30,6 +30,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sun);outline-offset
 .chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(20,23,43,.78);border:2px solid var(--ink);font:700 12px/1 var(--body);letter-spacing:.02em;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--leaf)}
 .dot.o{background:#F2A63B}
+.dot.on{background:#25F4EE;box-shadow:0 0 0 3px rgba(37,244,238,.25)}
 .fic{color:var(--muted);font-weight:500}
 .tools{display:flex;flex-direction:column;gap:8px}
 .tb{width:46px;height:46px;border-radius:14px;background:var(--cream);color:var(--ink);border:3px solid var(--ink);display:grid;place-items:center;box-shadow:0 3px 0 var(--ink);font:800 20px/1 var(--display)}
@@ -104,6 +105,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--sun);outline-offset
   <div class="stat">
    <span class="chip"><span class="dot"></span><span id="nIsi">0</span> terisi</span>
    <span class="chip"><span class="dot o"></span><span id="nKos">20</span> kosong</span>
+   <span class="chip" id="onChip" hidden><span class="dot on"></span><span id="nOn">1</span> warga online</span>
    <span class="chip fic">Ilustrasi: cerita fiktif</span>
   </div>
  </div>
@@ -439,6 +441,37 @@ function intMadura(R){const r=rng(510);const GC=['#E8604C','#F2A63B','#FFE07A','
  // lampu neon dalam (menyala malam)
  const pl=new T.PointLight('#FFF6E0',0,14,1.6);pl.position.set(0,3.3,1);R.add(pl);(K3.shopLights||(K3.shopLights=[])).push(pl);
  const tube=M(BX(2.4,.08,.12),mat('#FFFFFF','#FFFFFF'),R,0,3.55,.6,0,0);}
+function intKopi(R){const r=rng(611);
+ // meja bar + mesin kopi + toples biji kopi
+ M(BX(3.6,1.1,.8),'#6B4A36',R,0,.55,.2,.02);M(BX(3.8,.1,.95),'#3B2A20',R,0,1.15,.2,.01,0);
+ const mc=new T.Group();mc.position.set(-.9,1.2,0);R.add(mc);M(BX(.9,.7,.55),'#C8C8CC',mc,0,.35,0,.02);M(BX(.95,.12,.6),'#3B3A44',mc,0,.74,0,.01,0);M(CY(.05,.05,.2,8),'#3B3A44',mc,-.2,.18,.3,0,0);M(CY(.05,.05,.2,8),'#3B3A44',mc,.2,.18,.3,0,0);
+ for(let k=0;k<4;k++){M(CY(.13,.13,.36,10),'#E9DCC2',R,.5+k*.36,1.38,.05,.006,0);M(CY(.12,.12,.2,10),'#5A3A24',R,.5+k*.36,1.33,.05,0,0)}
+ for(let k=0;k<5;k++)M(CY(.07,.06,.14,8),'#FBF7F2',R,-1.6+k*.18,1.27,.48,.004,0);
+ // rak dinding belakang: toples, papan menu
+ M(BX(4.6,.08,.4),'#6B4A36',R,0,2.3,-2.4,0,0);M(BX(4.6,.08,.4),'#6B4A36',R,0,2.9,-2.4,0,0);
+ for(let k=0;k<12;k++){const c=['#5A3A24','#8A5A3C','#C9A06A','#E9DCC2'][k%4];M(CY(.13,.13,.34,10),c,R,-2+k*.36,2.52+(k%2?.6:0),-2.4,.006,0)}
+ M(BX(2.4,1.1,.06),new T.MeshToonMaterial({map:signTex('KOPI SUSU · TUBRUK · ES KOPI','#14172B','#FBF7F2',768,320,58),gradientMap:gm}),R,0,3.45,-2.55,.01,0);
+ // teras: meja bulat + kursi
+ [[-1.9,4.3],[0,4.6],[1.9,4.3]].forEach(([x,z],i)=>{const g=new T.Group();g.position.set(x,0,z);R.add(g);M(CY(.5,.5,.06,14),'#6B4A36',g,0,.8,0,.015);M(CY(.06,.06,.8,6),'#3B3A44',g,0,.4,0,0,0);
+  M(CY(.07,.06,.14,8),'#FBF7F2',g,.15,.88,.05,.004,0);[-1,1].forEach(sd=>{M(BX(.42,.08,.42),'#8A5A3C',g,sd*.75,.48,0,.01);M(BX(.08,.48,.08),'#3B3A44',g,sd*.75,.24,0,0,0)})});
+ // lampu gantung hangat
+ for(let k=0;k<3;k++){M(CY(.02,.02,.6,4),'#14172B',R,-1.5+k*1.5,3.5,1.2,0,0);M(SP(.14,10),new T.MeshBasicMaterial({color:'#FFD58A'}),R,-1.5+k*1.5,3.15,1.2,0,0)}
+ const pl=new T.PointLight('#FFC880',0,14,1.6);pl.position.set(0,3.1,1.2);R.add(pl);(K3.shopLights||(K3.shopLights=[])).push(pl)}
+function intRental(R){const r=rng(712);const scr=c=>new T.MeshBasicMaterial({color:c});
+ // deretan meja komputer (kiri & kanan) dengan layar menyala + kursi gaming
+ [-1,1].forEach(sd=>{for(let k=0;k<3;k++){const z=-1.9+k*1.3,x=sd*2.15;M(BX(1,.08,1.1),'#3B3A44',R,x,1,z,.01);M(BX(.08,.92,1),'#2E2E33',R,x+sd*.42,.5,z,0,0);
+  const mon=M(BX(.08,.5,.8),'#14172B',R,x+sd*.3,1.38,z,.01);const sc=new T.Mesh(BX(.02,.42,.72),scr(['#49ACDA','#3DB163','#9674B2'][(k+(sd>0?1:0))%3]));sc.position.set(x+sd*.25,1.38,z);R.add(sc);
+  M(BX(.12,.04,.5),'#1B1E2E',R,x-sd*.05,1.06,z,0,0);
+  const ch=new T.Group();ch.position.set(x-sd*.75,0,z);ch.rotation.y=sd>0?-Math.PI/2:Math.PI/2;R.add(ch);M(BX(.55,.12,.55),'#E8604C',ch,0,.55,0,.01);M(BX(.55,.8,.1),'#14172B',ch,0,1,-.25,.01);M(BX(.55,.2,.11),'#E8604C',ch,0,1.25,-.25,0,0);M(CY(.05,.05,.5,6),'#3B3A44',ch,0,.28,0,0,0)}});
+ // pojok PS: TV besar di dinding belakang + konsol + sofa
+ M(BX(2.2,1.25,.1),'#14172B',R,0,2.1,-2.55,.02);const tv=new T.Mesh(BX(2,1.08,.02),scr('#FFD23F'));tv.position.set(0,2.1,-2.49);R.add(tv);
+ M(BX(1.6,.5,.5),'#2E2E33',R,0,.25,-2.3,.01);M(BX(.5,.1,.38),'#FBF7F2',R,-.3,.55,-2.3,.005,0);M(BX(.5,.1,.38),'#14172B',R,.35,.55,-2.3,.005,0);
+ M(BX(1.8,.45,.75),'#9674B2',R,0,.42,-.6,.02);M(BX(1.8,.6,.2),'#7A5A9A',R,0,.8,-.25,.02);
+ for(let k=0;k<2;k++){M(BX(.22,.06,.14),'#14172B',R,-.4+k*.8,.7,-.65,0,0)}
+ // papan harga
+ M(BX(1.6,.9,.06),new T.MeshToonMaterial({map:signTex('PS 5RB/JAM · PC 4RB/JAM','#FFD23F','#14172B',640,360,54),gradientMap:gm}),R,0,3.3,-2.52,.01,0);
+ // lampu neon (malam)
+ const pl=new T.PointLight('#B8C8FF',0,14,1.6);pl.position.set(0,3.2,0);R.add(pl);(K3.shopLights||(K3.shopLights=[])).push(pl)}
 function mkShop(o,u){const x=o.x,z=o.z;const g=new T.Group();o.slot.add(g);
  // hadap ke jalan terdekat: jalan cabang z=10 / z=-30, jalan utama x=0
  const dz=[10,-30].map(r=>r-z).reduce((a,b)=>Math.abs(a)<Math.abs(b)?a:b),dx=(o.cx||0)-x;g.rotation.y=Math.abs(dz)<Math.abs(dx)?(dz>0?0:Math.PI):(dx>0?Math.PI/2:-Math.PI/2);
@@ -463,10 +496,11 @@ function mkShop(o,u){const x=o.x,z=o.z;const g=new T.Group();o.slot.add(g);
   // mesin ATM di samping
   const at=new T.Group();at.position.set(3.55,0,1.6);at.rotation.y=Math.PI/2;B3.add(at);M(BX(1,2.1,.8),'#1F5FA8',at,0,1.05,0,.03);M(BX(.6,.45,.05),'#BDEEFF',at,0,1.5,.41,.01,0);M(BX(.5,.12,.06),'#14172B',at,0,1.05,.42,.01,0);
   const atx=signTex('ATM','#FFD23F','#14172B',256,96,64);M(BX(.9,.32,.06),new T.MeshToonMaterial({color:'#ffffff',map:atx,gradientMap:gm}),at,0,1.95,.42,.01,0);}
+ if(u.type==='kopi'){gl.visible=false;gl2.visible=false}
  if(u.type==='madura'){gl.visible=false;gl2.visible=false;P.buka&&0;const jt=signTex('BUKA 24 JAM','#E8604C','#FBF7F2',512,96,52);P.j24=M(BX(1.9,.36,.06),new T.MeshToonMaterial({color:'#ffffff',map:jt,gradientMap:gm,emissive:'#401010'}),g,0,3.55,3.05,.01,0)}
  P.roof=new T.Group();g.add(P.roof);M(BX(6.8,.35,6.6),'#2E2926',P.roof,0,4.15,0,.04);M(BX(6.8,.5,.2),u.col||'#F2A63B',P.roof,0,4.55,3.2,.02);
  P.awn=M(BX(6.4,.12,1.4),u.trim||'#2E2926',P.roof,0,3.35,3.5,.03);
- P.rak=new T.Group();g.add(P.rak);({minuman:intMinuman,skate:intSkate,bank:intBank,madura:intMadura}[u.type]||intMinuman)(P.rak);
+ P.rak=new T.Group();g.add(P.rak);({minuman:intMinuman,skate:intSkate,bank:intBank,madura:intMadura,kopi:intKopi,rental:intRental}[u.type]||intMinuman)(P.rak);
  P.sign=new T.Group();g.add(P.sign);const stx=signTex(u.name,u.signBg||'#14172B','#FBF7F2',768,160,96);M(BX(5.4,1.2,.2),new T.MeshToonMaterial({color:'#ffffff',map:stx,gradientMap:gm}),P.sign,0,5.25,3.05,.04);
  const utx=signTex(u.user,u.plate||'#F2A63B','#14172B',512,96,48);M(BX(3,.55,.12),new T.MeshToonMaterial({color:'#ffffff',map:utx,gradientMap:gm}),P.sign,0,4.35,3.36,.02);
  const bk=signTex('BUKA','#3DB163','#FBF7F2',256,96,56);P.buka=M(BX(.9,.34,.04),new T.MeshToonMaterial({color:'#ffffff',map:bk,gradientMap:gm}),P.walls,.25,2.6,2.92,.01,0);
@@ -677,7 +711,7 @@ function openMaker(){MAKER=true;select(0);$('maker').hidden=false;$('hint').hidd
 $('mGo').onclick=()=>{ME.name=cleanName($('mName').value);if(ME.name.length<2){$('mName').focus();$('mName').placeholder='Isi dulu nama warga kamu';return}
  const first=!lsGet()?.made;ME.made=1;lsSet(ME);sendWarga(first?'karakter':'ubah');buildMe();MAKER=false;$('maker').hidden=true;$('bizRow').hidden=false;$('hint').hidden=false;meChip();
  if(first){PL.path=[[GX,10],[homeX(),10]];PL.onArrive=()=>{PL.wave=2.2}}else PL.wave=1.6;
- PL.follow=true;flyTo({tx:PL.x,tz:PL.z-4,yaw:PL.face+.5,pitch:.6,dist:24,ly:1},1.1)};
+ PL.follow=true;flyTo({tx:PL.x,tz:PL.z-4,yaw:PL.face+.5,pitch:.6,dist:24,ly:1},1.1);if(NET)netPush(true);else netStart()};
 function meChip(){$('bMe').hidden=false;$('hint').textContent=TOUCH?'Ketuk jalan untuk berjalan. 1 jari: geser pandangan. 2 jari: putar, miringkan, zoom.':'Ketuk jalan untuk berjalan. Ketuk titik untuk melihat usahanya.';
  let b=document.querySelector('.me');if(!b){b=document.createElement('button');b.className='me';$('bizRow').prepend(b);b.onclick=openMaker}
  b.textContent='';const n=document.createElement('span');n.textContent=ME.name;const e=document.createElement('span');e.textContent='· Ubah';e.style.opacity='.65';b.append(n,e)}
@@ -724,7 +758,43 @@ $('gForm').addEventListener('submit',e=>{e.preventDefault();const u=cleanName($(
  ME.user=u;ME.in=1;if(!ME.name)ME.name=u;lsSet(ME);PL.x=GX;PL.z=47;sendWarga('masuk');GATE=false;$('gate').hidden=true;openMaker()});
 function start(){if(!ME.in||!ME.user){GATE=true;platSw();$('gUser').value=ME.user;$('gate').hidden=false;$('hint').hidden=true;return}
  if(!ME.made){openMaker();return}
- PL.x=homeX();PL.z=10;PL.face=homeX()>GX?Math.PI/2:-Math.PI/2;buildMe();meChip();fromHash()}
+ PL.x=homeX()+(Math.random()-.5)*6;PL.z=10+(Math.random()-.5)*2;PL.face=homeX()>GX?Math.PI/2:-Math.PI/2;buildMe();meChip();fromHash();netStart()}
+
+// ---------- warga online (Firebase Realtime Database) ----------
+// FIREBASE kosong = fitur mati. Data: online/<uid> = {n,p,k(look),x,z,f,t}. onDisconnect menghapus entri saat tab ditutup.
+const FIREBASE={apiKey:"AIzaSyAkwz57YYRHS7omSTvvRcYBEDAAXjcr-YI",authDomain:"desa-hustle.firebaseapp.com",databaseURL:"https://desa-hustle-default-rtdb.firebaseio.com",projectId:"desa-hustle"}; // config web publik (bukan rahasia)
+const FBV='10.12.2',FBU='https://www.gstatic.com/firebasejs/'+FBV+'/';
+const OTH=new Map();let NET=null,netLast={x:0,z:0,f:0,s:0,mv:0};
+const oneOf=(v,list,d)=>list.includes(v)?v:d;
+function lookOf(k){k=k||{};return{skin:oneOf(k.skin,SKINS,SKINS[1]),hair:oneOf(k.hair,HAIRS.map(h=>h[0]),'short'),hairCol:oneOf(k.hairCol,HCOL,HCOL[0]),shirt:oneOf(k.shirt,SHIRT,SHIRT[0]),pants:oneOf(k.pants,PANTS,PANTS[0]),peci:k.peci?1:0,must:k.must?1:0,skirt:k.skirt?1:0}}
+const myLook=()=>lookOf(ME);
+function mkOther(d){const k=lookOf(d.k),o={skin:k.skin,hair:k.hair,hairCol:k.hairCol,shirt:k.shirt,pants:k.pants};if(k.peci)o.peci=1;if(k.must){o.must=1;o.mustCol=k.hairCol}if(k.skirt)o.skirt=k.pants;
+ const c=K3.char(o);c.add(nameTag(cleanName(String(d.n||''))||'Warga'));return c}
+function upOther(id,d){if(!d||typeof d!=='object')return;const x=+d.x,z=+d.z;if(!isFinite(x)||!isFinite(z))return;
+ let w=OTH.get(id);const sig=JSON.stringify([d.n,d.k]);
+ if(!w){w={c:mkOther(d),sig,x,z,f:+d.f||0,walk:0};w.c.position.set(x,0,z);S.add(w.c);OTH.set(id,w)}
+ else if(w.sig!==sig){S.remove(w.c);w.c=mkOther(d);w.sig=sig;w.c.position.set(w.x,0,w.z);S.add(w.c)}
+ w.seen=Date.now();w.tx=cl(x,-60,CX2+60);w.tz=cl(z,-70,70);w.tf=+d.f||0;onCount()}
+function rmOther(id){const w=OTH.get(id);if(w){S.remove(w.c);OTH.delete(id);onCount()}}
+function onCount(){if(!NET)return;$('onChip').hidden=false;$('nOn').textContent=OTH.size+1}
+function stepOthers(t,dt){OTH.forEach(w=>{const dx=w.tx-w.x,dz=w.tz-w.z,d=Math.hypot(dx,dz);
+ if(d>25){w.x=w.tx;w.z=w.tz}else if(d>.05){const st=Math.max(4.4,d*2)*dt;if(d<=st){w.x=w.tx;w.z=w.tz}else{w.x+=dx/d*st;w.z+=dz/d*st}w.f=Math.atan2(dx,dz);w.walk+=dt}
+ const mv=d>.05;w.c.position.set(w.x,0,w.z);let dr=(mv?w.f:w.tf)-w.c.rotation.y;dr=Math.atan2(Math.sin(dr),Math.cos(dr));w.c.rotation.y+=dr*Math.min(1,dt*10);
+ K3.walk(w.c,mv?w.walk*9:0,mv?.5:0);K3.face(w.c,{smile:.7,blink:(t*.9+w.x)%3.2<.12?1:0})})}
+async function netStart(){if(!FIREBASE||NET)return;NET={};
+ try{const [A,U,D]=await Promise.all(['firebase-app.js','firebase-auth.js','firebase-database.js'].map(f=>import(FBU+f)));
+  const app=A.initializeApp(FIREBASE),db=D.getDatabase(app),auth=U.getAuth(app);
+  const cred=await U.signInAnonymously(auth),uid=cred.user.uid,me=D.ref(db,'online/'+uid);
+  Object.assign(NET,{D,db,uid,me});await D.onDisconnect(me).remove();netPush(true);
+  const q=D.query(D.ref(db,'online'),D.limitToLast(80));
+  D.onChildAdded(q,s=>{if(s.key!==uid)upOther(s.key,s.val())});D.onChildChanged(q,s=>{if(s.key!==uid)upOther(s.key,s.val())});D.onChildRemoved(q,s=>rmOther(s.key));
+  onCount();setInterval(()=>{netPush(true);OTH.forEach((w,id)=>{if(Date.now()-w.seen>150000)rmOther(id)})},60000); // detak 60 dtk; yang diam >150 dtk dianggap sudah pergi
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)D.remove(me).catch(()=>{});else netPush(true)});
+ }catch(e){console.warn('warga online mati:',e);NET=null}}
+function netPush(force){if(!NET||!NET.me||!pc)return;const now=performance.now();
+ const moved=Math.hypot(PL.x-netLast.x,PL.z-netLast.z)>.25||Math.abs(PL.face-netLast.f)>.3;
+ if(!force&&(!moved||now-netLast.s<220))return;netLast={x:PL.x,z:PL.z,f:PL.face,s:now};
+ NET.D.set(NET.me,{n:ME.name||'Warga',p:ME.plat,k:myLook(),x:Math.round(PL.x*100)/100,z:Math.round(PL.z*100)/100,f:Math.round(PL.face*100)/100,t:NET.D.serverTimestamp()}).catch(()=>{})}
 
 // ---------- loop ----------
 const t0=performance.now();let last=t0;
@@ -742,7 +812,7 @@ function frame(now){const t=(now-t0)/1000,dt=Math.min(.05,(now-last)/1000);last=
  if(SEL){tObj(SEL).glow.material.opacity=.3+.18*Math.sin(t*4)}
  // kamera
  if(G){const k=Math.min(1,(now-G.t0)/G.dur),e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;for(const key of ['tx','tz','yaw','pitch','dist','ly'])V[key]=lerp(G.from[key],G.to[key],e);if(k>=1)G=null}
- stepMe(t,dt);if(GATE&&!G)V.yaw+=dt*.06;
+ stepMe(t,dt);stepOthers(t,dt);netPush(false);if(GATE&&!G)V.yaw+=dt*.06;
  applyCam();K3.draw(t);
  requestAnimationFrame(frame)}
 document.fonts.load('800 40px PJS').then(()=>K3.refont()).catch(()=>{}).finally(()=>{applyCam();requestAnimationFrame(frame);
