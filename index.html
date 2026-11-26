@@ -359,7 +359,7 @@ K3.WARGA={
  k1:{hair:'kid',hairCol:'#1E1A1A',skin:SKC.c,shirt:'#FBF7F2',pants:'#C9583F',scale:.62},k2:{hair:'kid',hairCol:'#1E1A1A',skin:SKC.d,shirt:'#FBF7F2',pants:'#2E3550',scale:.6},
  w1:{hair:'short',hairCol:'#3A2C24',skin:SKC.a,shirt:'#5B7FA6',pants:'#3B3A44',must:1}};
 // ---------- usaha terisi (PERMANEN, sumber: TITIK-TERISI.md) ----------
-K3.TERISI=[{t:5,type:'minuman',name:'OUTLET 23',user:'@radit.kntrrrr',ep:2},{t:3,type:'skate',name:'TOKO SKATEBOARD',user:'@r4yhan_dwi',ep:3,col:'#4A4A52',wall:'#2E2E33',plate:'#FFD23F'},{t:10,type:'madura',name:'WARUNG MADURA',user:'@raqui_taki',ep:5,col:'#2E7D32',wall:'#E9E4D8',plate:'#FFD23F',trim:'#2E7D32',signBg:'#2E7D32'},{t:11,type:'kopi',name:'KEDAI KOPI',user:'@apiisssssparker',ep:6,col:'#6B4A36',wall:'#E9DCC2',plate:'#FFD23F',trim:'#4A3426',signBg:'#4A3426'},{t:12,rt:2,type:'rental',name:'RENTAL PS & KOMPUTER',user:'@vezx988',ep:6,col:'#9674B2',wall:'#2E3550',plate:'#FFD23F',trim:'#14172B',signBg:'#14172B'},{t:8,type:'bank',name:'BANK DESA HUSTLE',user:'@fthirlzmy',ep:4,col:'#1F5FA8',wall:'#E9E4D8',plate:'#FFD23F',trim:'#D8D2C4',signBg:'#1F5FA8'}];
+K3.TERISI=[{t:5,type:'minuman',name:'OUTLET 23',user:'@radit.kntrrrr',ep:2},{t:3,type:'skate',name:'TOKO SKATEBOARD',user:'@r4yhan_dwi',ep:3,col:'#4A4A52',wall:'#2E2E33',plate:'#FFD23F'},{t:10,type:'madura',name:'WARUNG MADURA',user:'@raqui_taki',ep:5,col:'#2E7D32',wall:'#E9E4D8',plate:'#FFD23F',trim:'#2E7D32',signBg:'#2E7D32'},{t:11,type:'kopi',name:'KEDAI KOPI',user:'@apiisssssparker',ep:6,col:'#6B4A36',wall:'#E9DCC2',plate:'#FFD23F',trim:'#4A3426',signBg:'#4A3426'},{t:12,rt:2,type:'rental',name:'RENTAL PS & KOMPUTER',user:'@vezx988',ep:6,col:'#9674B2',wall:'#2E3550',plate:'#FFD23F',trim:'#14172B',signBg:'#14172B'},{t:8,type:'bank',name:'BANK DESA HUSTLE',user:'@fthirlzmy',ep:4,col:'#1F5FA8',wall:'#E9E4D8',plate:'#FFD23F',trim:'#D8D2C4',signBg:'#1F5FA8'},{t:14,type:'bakso',name:'WARUNG BAKSO',user:'@rulexcellent',ep:7,col:'#E8604C',wall:'#FBF7F2',plate:'#FFD23F',trim:'#2E7DB8',signBg:'#E8604C'},{t:4,rt:2,type:'masjid',name:'MASJID',user:'@vezx988',ep:7,col:'#2E7D32',wall:'#F3EBD8',plate:'#FFD23F',trim:'#2E7D32',signBg:'#2E7D32'}];
 const ease=(a,b,k)=>{const v=Math.min(1,Math.max(0,(k-a)/(b-a)));return v*v*(3-2*v)};
 // ---------- tekstur kolase poster & stiker ala skate shop 90an (orisinal, tanpa logo merek) ----------
 const SKW=['SKATE','RIDE','GRIND','OLLIE','PUSH','LOCALS','SK8','RAD','90s','SKATE CREW','DESA HUSTLE','KICKFLIP','NO RULES','STAY RAD','HUSTLE','BOARD','DROP IN','RIP'];
@@ -472,6 +472,29 @@ function intRental(R){const r=rng(712);const scr=c=>new T.MeshBasicMaterial({col
  M(BX(1.6,.9,.06),new T.MeshToonMaterial({map:signTex('PS 5RB/JAM · PC 4RB/JAM','#FFD23F','#14172B',640,360,54),gradientMap:gm}),R,0,3.3,-2.52,.01,0);
  // lampu neon (malam)
  const pl=new T.PointLight('#B8C8FF',0,14,1.6);pl.position.set(0,3.2,0);R.add(pl);(K3.shopLights||(K3.shopLights=[])).push(pl)}
+function intBakso(R){
+ // gerobak bakso di teras (kaca etalase, panci kuah, roda)
+ const gb=new T.Group();gb.position.set(-1.4,0,3.9);R.add(gb);M(BX(2.2,.9,.9),'#2E7DB8',gb,0,.75,0,.02);M(BX(2.3,.08,1),'#FBF7F2',gb,0,1.24,0,.01,0);
+ const kc=new T.Mesh(BX(1.2,.7,.8),new T.MeshBasicMaterial({color:'#DFF4FF',transparent:true,opacity:.45}));kc.position.set(-.4,1.63,0);gb.add(kc);M(BX(1.25,.06,.85),'#C8C8CC',gb,-.4,2,0,.01,0);
+ for(let k=0;k<6;k++)M(SP(.09,8),'#C9A06A',gb,-.7+(k%3)*.3,1.36+Math.floor(k/3)*.2,.1,0,0);
+ [[.55,.25],[.55,-.25]].forEach(([px,pz])=>{M(CY(.3,.28,.45,14),'#C8C8CC',gb,px,1.5,pz,.015);M(CY(.31,.31,.05,14),'#9A9AA0',gb,px,1.75,pz,0,0)});
+ [-.8,.8].forEach(px=>{const w=M(CY(.32,.32,.1,14),'#14172B',gb,px,.32,.5,.015);w.rotation.x=Math.PI/2});
+ const gt=signTex('BAKSO','#E8604C','#FBF7F2',256,96,60);M(BX(1.4,.4,.05),new T.MeshToonMaterial({color:'#ffffff',map:gt,gradientMap:gm}),gb,0,.8,.47,.01,0);
+ // meja makan + bangku panjang di dalam, mangkok di atas meja
+ [[-1.2,-1.2],[1.2,-1.2],[1.2,.6]].forEach(([x,z])=>{const g=new T.Group();g.position.set(x,0,z);R.add(g);M(BX(1.5,.08,.9),'#8A5A3C',g,0,.85,0,.015);[-.6,.6].forEach(a=>M(BX(.08,.85,.7),'#6B4A36',g,a,.42,0,0,0));
+  [-1,1].forEach(sd=>M(BX(1.5,.08,.32),'#6B4A36',g,0,.48,sd*.72,.01));[-.35,.35].forEach(a=>{M(CY(.17,.1,.14,12),'#FBF7F2',g,a,.96,0,.006);M(CY(.15,.15,.02,12),'#C9893C',g,a,1.02,0,0,0)});
+  M(CY(.06,.06,.22,8),'#E8604C',g,0,1,.25,.004,0);M(CY(.06,.06,.22,8),'#2E2926',g,.15,1,.25,.004,0)});
+ // papan menu di dinding belakang
+ M(BX(3,1.1,.06),new T.MeshToonMaterial({map:signTex('BAKSO URAT · BAKSO TELUR · MIE AYAM','#FFD23F','#14172B',900,320,52),gradientMap:gm}),R,0,3,-2.55,.01,0);
+ const pl=new T.PointLight('#FFE2B0',0,14,1.6);pl.position.set(0,3.2,1);R.add(pl);(K3.shopLights||(K3.shopLights=[])).push(pl)}
+function intMasjid(R){
+ // karpet hijau bergaris shaf + mimbar kecil + rak Al-Quran
+ M(BX(5.4,.04,5),'#2E7D32',R,0,.33,-.1,0,0);for(let k=0;k<5;k++)M(BX(5.4,.012,.06),'#E9DCC2',R,0,.36,-2+k*.95,0,0);
+ M(BX(1.1,1.2,.7),'#8A5A3C',R,1.9,.9,-2.2,.015);M(BX(1.2,.1,.8),'#6B4A36',R,1.9,1.55,-2.2,0,0);
+ M(BX(1.6,1,.4),'#8A5A3C',R,-1.8,.8,-2.45,.015);for(let k=0;k<8;k++)M(BX(.12,.3,.28),['#2E7D32','#C9A06A','#14172B'][k%3],R,-2.4+k*.17,1.05,-2.4,0,0);
+ // lampu gantung
+ M(CY(.02,.02,.7,4),'#C9A06A',R,0,3.45,0,0,0);M(SP(.22,12),new T.MeshBasicMaterial({color:'#FFE9B0'}),R,0,3.05,0,0,0);
+ const pl=new T.PointLight('#FFE9B0',0,16,1.6);pl.position.set(0,3,1);R.add(pl);(K3.shopLights||(K3.shopLights=[])).push(pl)}
 function mkShop(o,u){const x=o.x,z=o.z;const g=new T.Group();o.slot.add(g);
  // hadap ke jalan terdekat: jalan cabang z=10 / z=-30, jalan utama x=0
  const dz=[10,-30].map(r=>r-z).reduce((a,b)=>Math.abs(a)<Math.abs(b)?a:b),dx=(o.cx||0)-x;g.rotation.y=Math.abs(dz)<Math.abs(dx)?(dz>0?0:Math.PI):(dx>0?Math.PI/2:-Math.PI/2);
@@ -497,16 +520,29 @@ function mkShop(o,u){const x=o.x,z=o.z;const g=new T.Group();o.slot.add(g);
   const at=new T.Group();at.position.set(3.55,0,1.6);at.rotation.y=Math.PI/2;B3.add(at);M(BX(1,2.1,.8),'#1F5FA8',at,0,1.05,0,.03);M(BX(.6,.45,.05),'#BDEEFF',at,0,1.5,.41,.01,0);M(BX(.5,.12,.06),'#14172B',at,0,1.05,.42,.01,0);
   const atx=signTex('ATM','#FFD23F','#14172B',256,96,64);M(BX(.9,.32,.06),new T.MeshToonMaterial({color:'#ffffff',map:atx,gradientMap:gm}),at,0,1.95,.42,.01,0);}
  if(u.type==='kopi'){gl.visible=false;gl2.visible=false}
+ if(u.type==='bakso'){gl.visible=false;gl2.visible=false}
+ if(u.type==='masjid'){gl.visible=false;gl2.visible=false;
+  // pintu lengkung hijau + jendela lengkung di dinding samping, menara di sisi kiri belakang
+  const DG='#2E7D32',GD='#C9A06A';
+  [-1.72,1.12].forEach((px,i)=>{const w=i?2.6:2.1;M(BX(w*.62,2.3,.08),DG,P.walls,px,1.45,2.9,.01,0);const ar=new T.Mesh(new T.CircleGeometry(w*.31,20,0,Math.PI),mat(DG));ar.position.set(px,2.6,2.95);P.walls.add(ar);M(BX(.05,2.3,.1),GD,P.walls,px,1.45,2.95,0,0)});
+  [-1,1].forEach(sd=>[-1.2,1.2].forEach(zz=>{M(BX(.08,1.3,.8),DG,P.walls,sd*3.02,1.9,zz,0,0)}));
+  const mn=new T.Group();mn.position.set(-3.9,0,-2.2);P.walls.add(mn);M(BX(1.3,.3,1.3),'#D8D2C4',mn,0,.15,0,.02);M(CY(.42,.5,6.4,12),WC,mn,0,3.5,0,.03);M(CY(.62,.62,.18,12),DG,mn,0,5.4,0,.02);M(CY(.56,.56,.6,12),WC,mn,0,5.8,0,.02);
+  const mt=M(new T.ConeGeometry(.6,1.3,12),DG,mn,0,6.75,0,.03);M(CY(.03,.03,.5,6),GD,mn,0,7.6,0,0,0);
+  const cr=new T.Mesh(new T.TorusGeometry(.16,.04,6,16,Math.PI*1.4),mat(GD));cr.position.set(0,7.95,0);cr.rotation.z=Math.PI*.8;mn.add(cr);
+  P.mtop=mn}
  if(u.type==='madura'){gl.visible=false;gl2.visible=false;P.buka&&0;const jt=signTex('BUKA 24 JAM','#E8604C','#FBF7F2',512,96,52);P.j24=M(BX(1.9,.36,.06),new T.MeshToonMaterial({color:'#ffffff',map:jt,gradientMap:gm,emissive:'#401010'}),g,0,3.55,3.05,.01,0)}
  P.roof=new T.Group();g.add(P.roof);M(BX(6.8,.35,6.6),'#2E2926',P.roof,0,4.15,0,.04);M(BX(6.8,.5,.2),u.col||'#F2A63B',P.roof,0,4.55,3.2,.02);
  P.awn=M(BX(6.4,.12,1.4),u.trim||'#2E2926',P.roof,0,3.35,3.5,.03);
- P.rak=new T.Group();g.add(P.rak);({minuman:intMinuman,skate:intSkate,bank:intBank,madura:intMadura,kopi:intKopi,rental:intRental}[u.type]||intMinuman)(P.rak);
+ if(u.type==='masjid'){P.awn.visible=false;const DG='#2E7D32',GD='#C9A06A';M(CY(1.7,1.7,.9,24),u.wall||'#FBF7F2',P.roof,0,4.75,-.3,.03);M(CY(1.78,1.78,.16,24),DG,P.roof,0,5.25,-.3,.02);
+  const dm=M(new T.SphereGeometry(1.65,24,14,0,Math.PI*2,0,Math.PI/2),DG,P.roof,0,5.3,-.3,.04);M(CY(.04,.04,.7,6),GD,P.roof,0,7.2,-.3,0,0);
+  const cr=new T.Mesh(new T.TorusGeometry(.2,.05,6,16,Math.PI*1.4),mat(GD));cr.position.set(0,7.65,-.3);cr.rotation.z=Math.PI*.8;P.roof.add(cr)}
+ P.rak=new T.Group();g.add(P.rak);({minuman:intMinuman,skate:intSkate,bank:intBank,madura:intMadura,kopi:intKopi,rental:intRental,bakso:intBakso,masjid:intMasjid}[u.type]||intMinuman)(P.rak);
  P.sign=new T.Group();g.add(P.sign);const stx=signTex(u.name,u.signBg||'#14172B','#FBF7F2',768,160,96);M(BX(5.4,1.2,.2),new T.MeshToonMaterial({color:'#ffffff',map:stx,gradientMap:gm}),P.sign,0,5.25,3.05,.04);
  const utx=signTex(u.user,u.plate||'#F2A63B','#14172B',512,96,48);M(BX(3,.55,.12),new T.MeshToonMaterial({color:'#ffffff',map:utx,gradientMap:gm}),P.sign,0,4.35,3.36,.02);
  const bk=signTex('BUKA','#3DB163','#FBF7F2',256,96,56);P.buka=M(BX(.9,.34,.04),new T.MeshToonMaterial({color:'#ffffff',map:bk,gradientMap:gm}),P.walls,.25,2.6,2.92,.01,0);
  const set=(k)=>{g.visible=k>0.001;P.slab.scale.y=Math.max(.01,ease(0,.15,k));P.walls.scale.y=Math.max(.001,ease(.15,.45,k));P.walls.visible=k>.15;
   P.roof.visible=k>.45;if(P.bankx){P.bankx.visible=k>.15;P.bankx.scale.y=Math.max(.001,ease(.15,.45,k))}P.roof.position.y=(1-ease(.45,.6,k))*3;P.rak.visible=k>.6;P.rak.scale.setScalar(Math.max(.001,ease(.6,.78,k)));
-  P.sign.visible=k>.78;P.sign.position.y=(1-ease(.78,.95,k))*4;P.buka.visible=k>.97&&u.type!=='madura';if(P.j24)P.j24.visible=k>.97;
+  P.sign.visible=k>.78;P.sign.position.y=(1-ease(.78,.95,k))*4;P.buka.visible=k>.97&&u.type!=='madura'&&u.type!=='masjid';if(P.j24)P.j24.visible=k>.97;
   o.rope.visible=k<.15;o.terisi=k>=1};
  return {g,P,set,u}}
 K3.usaha={};K3.usaha2={};K3.TERISI.forEach(u=>{if(u.rt===2){const o=K3.titik2[u.t-1];K3.usaha2[u.t]=mkShop(o,u)}else{const o=K3.titik[u.t-1];K3.usaha[u.t]=mkShop(o,u)}});
@@ -536,7 +572,9 @@ const INFO={
  8:{desc:'Bank fiktif milik desa. Sejak dibuka, warga tidak perlu naik bus ke kota untuk menabung.',col:'#1F5FA8'},
  10:{desc:'Buka 24 jam. Gas, beras, bensin botolan, sampai kopi sachet jam 2 pagi.',col:'#2E7D32'},
  11:{desc:'Kedai kopi tempat warga nongkrong. Usulan komentar Instagram dengan like terbanyak sejauh ini.',col:'#6B4A36'},
- 112:{desc:'Rental PS dan komputer pertama di RT 02. Usaha pertama di wilayah TikTok.',col:'#9674B2'}};
+ 112:{desc:'Rental PS dan komputer pertama di RT 02. Usaha pertama di wilayah TikTok.',col:'#9674B2'},
+ 14:{desc:'Warung bakso hangat tempat warga makan siang dan kumpul sore.',col:'#E8604C'},
+ 104:{desc:'Masjid pertama di RT 02, tempat warga beribadah dan berkumpul.',col:'#2E7D32'}};
 const LIST=[...K3.TERISI].sort((a,b)=>a.ep-b.ep);
 const byT={};LIST.forEach(u=>byT[uid(u)]=u);
 
